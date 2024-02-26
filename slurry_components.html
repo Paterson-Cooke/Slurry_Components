@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>
+    Slurry Components
+  </title>
+  <style>
+    body {
+      background-color: dimgray;
+      box-sizing: border-box;
+
+      .column {
+        float: left;
+        width: 300px;
+        padding: 10px;
+      }
+
+      .row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+    }
+  </style>
+  <script src="./reference/p5.js"></script>
+</head>
+
+<body>
+  <h3>Enter the known slurry information until the results are populated. Additional data will overspecify
+    the slurry and produce errors.</h3>
+  <div class="row">
+    <div class="column">
+      <label for="solids_throughput">Solids Throughput (t/h):</label>
+      <input type="number" id="st" name="solids_throughput" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+    <div class="column">
+      <label for="solids_density">Solids Density (kg/m3):</label>
+      <input type="number" id="sd" name="solids_density" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+    <div class="column">
+      <label for="solids_flow">Solids Flow (m3/h):</label>
+      <input type="number" id="sf" name="solids_flow" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <label for="liquid_throughput">Liquid Throughput (t/h):</label>
+      <input type="number" id="lt" name="liquid_throughput" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+    <div class="column">
+      <label for="liquid_density">Liquid Density (kg/m3):</label>
+      <input type="number" id="ld" name="liquid_density" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+    <div class="column">
+      <label for="liquid_flow">Liquid Flow (m3/h):</label>
+      <input type="number" id="lf" name="liquid_flow" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <label for="slurry_throughput">Slurry Throughput (t/h):</label>
+      <input type="number" id="mt" name="slurry_throughput" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+    <div class="column">
+      <label for="slurry_density">Slurry Density (kg/m3):</label>
+      <input type="number" id="md" name="slurry_density" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+    <div class="column">
+      <label for="slurry_flow">Slurry Flow (m3/h):</label>
+      <input type="number" id="mf" name="slurry_flow" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <label for="mass_concentration">Mass Concentration (%):</label>
+      <input type="number" id="mc" name="mass_concentration" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+    <div class="column">
+      <p></p>
+    </div>
+    <div class="column">
+      <label for="volume_concentration">Volume Concentration (%):</label>
+      <input type="number" id="vc" name="volume_concentration" min="0" step="1" onchange="input_logic_check()" />
+    </div>
+    <br>
+    <script>
+      function input_logic_check() {
+        //inputs
+        var solids_throughput = Number(document.getElementById("st").value);
+        var liquid_throughput = Number(document.getElementById("lt").value);
+        var slurry_throughput = Number(document.getElementById("mt").value);
+        var solids_density = Number(document.getElementById("sd").value);
+        var liquid_density = Number(document.getElementById("ld").value);
+        var slurry_density = Number(document.getElementById("md").value);
+        var solids_flow = Number(document.getElementById("sf").value);
+        var liquid_flow = Number(document.getElementById("lf").value);
+        var slurry_flow = Number(document.getElementById("mf").value);
+        var mass_concentration = Number(document.getElementById("mc").value) / 100;
+        var volume_concentration = Number(document.getElementById("vc").value) / 100;
+
+        // check if solids_throughput should be disabled
+        if ((slurry_throughput != 0 && mass_concentration != 0) ||
+          (solids_density != 0 && solids_flow != 0) ||
+          (mass_concentration != 0 && liquid_throughput != 0)) {
+          document.getElementById("st").disabled = true;
+        } else {
+          document.getElementById("st").disabled = false;
+        }
+        // check if liquid_throughput should be disabled
+        if ((slurry_throughput != 0 && solids_throughput != 0) ||
+          (liquid_density != 0 && liquid_flow != 0) ||
+          (solids_throughput != 0 && mass_concentration != 0)) {
+          document.getElementById("lt").disabled = true;
+        } else {
+          document.getElementById("lt").disabled = false;
+        }
+        // check if slurry_throughput should be disabled
+        if ((solids_throughput != 0 && liquid_throughput != 0) ||
+          (solids_throughput != 0 && mass_concentration != 0) ||
+          (slurry_density != 0 && slurry_flow != 0)) {
+          document.getElementById("mt").disabled = true;
+        } else {
+          document.getElementById("mt").disabled = false;
+        }
+        // check if solids_flow should be disabled
+        if ((slurry_flow != 0 && liquid_flow != 0) ||
+          (solids_throughput != 0 && solids_density != 0) ||
+          (slurry_flow != 0 && volume_concentration != 0)) {
+          document.getElementById("sf").disabled = true;
+        } else {
+          document.getElementById("sf").disabled = false;
+        }
+        // check if liquid_flow should be disabled
+        if ((slurry_flow != 0 && solids_flow != 0) ||
+          (liquid_throughput != 0 && liquid_density != 0) ||
+          (solids_flow != 0 && volume_concentration != 0)) {
+          document.getElementById("lf").disabled = true;
+        } else {
+          document.getElementById("lf").disabled = false;
+        }
+        // check if slurry_flow should be disabled
+        if ((solids_flow != 0 && liquid_flow != 0) ||
+          (slurry_throughput != 0 && slurry_density != 0) ||
+          (liquid_flow != 0 && volume_concentration != 0)) {
+          document.getElementById("mf").disabled = true;
+        } else {
+          document.getElementById("mf").disabled = false;
+        }
+        // check if solids_density should be disabled
+        if ((liquid_density != 0 && volume_concentration != 0 && mass_concentration != 0) ||
+          (slurry_density != 0 && liquid_density != 0 && volume_concentration != 0) ||
+          (mass_concentration != 0 && liquid_density != 0 && volume_concentration != 0) ||
+          (mass_concentration != 0 && slurry_density != 0 && liquid_density != 0) ||
+          (slurry_density != 0 && liquid_density != 0 && volume_concentration != 0) ||
+          (solids_throughput != 0 && solids_flow != 0)) {
+          document.getElementById("sd").disabled = true;
+        } else {
+          document.getElementById("sd").disabled = false;
+        }
+        // check if liquid_density should be disabled
+        if ((mass_concentration != 0 && slurry_density != 0 && solids_density != 0) ||
+          (solids_density != 0 && mass_concentration != 0 && volume_concentration != 0) ||
+          (slurry_density != 0 && solids_density != 0 && volume_concentration != 0) ||
+          (slurry_density != 0 && volume_concentration != 0 && mass_concentration != 0) ||
+          (liquid_throughput != 0 && liquid_flow != 0)) {
+          document.getElementById("ld").disabled = true;
+        } else {
+          document.getElementById("ld").disabled = false;
+        }
+        // check if slurry_density should be disabled
+        if ((liquid_density != 0 && mass_concentration != 0 && solids_density != 0) ||
+          (liquid_density != 0 && volume_concentration != 0 && solids_density != 0) ||
+          (slurry_throughput != 0 && slurry_flow != 0)) {
+          document.getElementById("md").disabled = true;
+        } else {
+          document.getElementById("md").disabled = false;
+        }
+        // check if volume_concentration should be disabled
+        if ((slurry_density != 0 && liquid_density != 0 && solids_density != 0) ||
+          (liquid_density != 0 && solids_density != 0 && mass_concentration != 0) ||
+          (solids_flow != 0 && slurry_flow != 0) ||
+          (solids_flow != 0 && liquid_flow != 0)) {
+          document.getElementById("vc").disabled = true;
+        } else {
+          document.getElementById("vc").disabled = false;
+        }
+        // check if mass_concentration should be disabled
+        if ((solids_density != 0 && slurry_density != 0 && liquid_density != 0) ||
+          (solids_density != 0 && liquid_density != 0 && volume_concentration != 0) ||
+          (solids_throughput != 0 && slurry_throughput != 0) ||
+          (solids_density != 0 && slurry_density != 0 && liquid_density != 0) ||
+          (solids_throughput != 0 && liquid_throughput != 0)) {
+          document.getElementById("mc").disabled = true;
+        } else {
+          document.getElementById("mc").disabled = false;
+        }
+      }
+    </script>
+    <script src="slurry_components.js"></script>
+</body>
+
+</html>
